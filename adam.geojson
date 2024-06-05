@@ -1,0 +1,104 @@
+{
+	"type": "FeatureCollection",
+	"features": [
+	  {
+		"type": "Feature",
+		"properties": {
+		  "Name": "Ramallah",
+		  "Notes": "Al Manara Square, defacto capital"
+		},
+		"geometry": {
+		  "coordinates": [
+			35.19444242128799,
+			31.906586350334138
+		  ],
+		  "type": "Point"
+		}
+	  },
+	  {
+		"type": "Feature",
+		"properties": {
+		  "Name": "Beit El",
+		  "Notes": "Primary settlement near Ramallah"
+		},
+		"geometry": {
+		  "coordinates": [
+			35.223721530323786,
+			31.944798205400488
+		  ],
+		  "type": "Point"
+		}
+	  },
+	  {
+		"type": "Feature",
+		"properties": {
+		  "Name": "Ariel",
+		  "Notes": "Largest Israeli settlement"
+		},
+		"geometry": {
+		  "coordinates": [
+			35.18716022745389,
+			32.10940333391656
+		  ],
+		  "type": "Point"
+		}
+	  },
+	  {
+		"type": "Feature",
+		"properties": {
+		  "Name": "Rachel's Tomb",
+		  "Notes": "Border wall extension"
+		},
+		"geometry": {
+		  "coordinates": [
+			35.2018457272672,
+			31.719064941751782
+		  ],
+		  "type": "Point"
+		}
+	  },
+	  {
+		"type": "Feature",
+		"properties": {
+		  "Name": "Qalandiya checkpoint",
+		  "Notes": "Hell on earth"
+		},
+		"geometry": {
+		  "coordinates": [
+			35.22619054287904,
+			31.862623906910883
+		  ],
+		  "type": "Point"
+		}
+	  },
+	  {
+		"type": "Feature",
+		"properties": {
+		  "Name": "Psagot",
+		  "Notes": "Settlement boundary"
+		},
+		"geometry": {
+		  "coordinates": [
+			35.22543119000241,
+			31.901146241629135
+		  ],
+		  "type": "Point"
+		}
+	  },
+	  {
+		"type": "Feature",
+		"properties": {
+		  "Name": "Ofer prison",
+		  "Notes": "Carceral infrastructure"
+		},
+		"geometry": {
+		  "coordinates": [
+			35.17965063896463,
+			31.879594530761835
+		  ],
+		  "type": "Point"
+		}
+	  }
+	]
+  }
+  
