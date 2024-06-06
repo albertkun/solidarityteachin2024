@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Hillshaded Terrain in West Bank</title>
+  <meta property="og:description" content="Use extrusions to display buildings' height in 3D." />
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css' />
+  <script src='https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js'></script>
+  <style>
+      body { margin: 0; padding: 0; }
+      html, body, #map { height: 100%; }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+const MAPTILER_KEY = 'z37jJYOIqWw3eBn8jUWN';
+const map = (window.map = new maplibregl.Map({
+	container: 'map',
+	zoom: 12,
+	center: [35.19444242128799, 31.906586350334138],
+	pitch: 0,
+	maxPitch: 85,
+	hash: true,
+	style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_KEY}`,
+	maxZoom: 18,
+	maxPitch: 85
+}));
+
+map.on('load', () => {
+	// Add terrain source
+	map.addSource("terrain", {
+		"type": "raster-dem",
+		"url": `https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=${MAPTILER_KEY}`,
+		"tileSize": 256
+	});
+	map.setTerrain({ "source": "terrain" });
+
+	// Add hillshade source
+	map.addSource("hillshade", {
+		"type": "raster-dem",
+		"url": `https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=${MAPTILER_KEY}`,
+		"tileSize": 256
+	});
+
+	// Add hillshade layer
+	map.addLayer({
+		"id": "hillshade",
+		"type": "hillshade",
+		"source": "hillshade",
+		"layout": { "visibility": "visible" },
+		"paint": { "hillshade-shadow-color": "#473B24" }
+	});
+
+	// Add navigation control
+	map.addControl(
+		new maplibregl.NavigationControl({
+			visualizePitch: true,
+			showZoom: true,
+			showCompass: true
+		})
+	);
+
+	// Add terrain control
+	map.addControl(
+		new maplibregl.TerrainControl({
+			source: 'terrain',
+			exaggeration: 1
+		})
+	);
+});
+
+
+
+  // The 'building' layer in the streets vector source contains building-height
+  // data from OpenStreetMap.
+  map.on('load', () => {
+      // Insert the layer beneath any symbol layer.
+      const layers = map.getStyle().layers;
+
+      let labelLayerId;
+      for (let i = 0; i < layers.length; i++) {
+          if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+              labelLayerId = layers[i].id;
+              break;
+          }
+      }
+
+    // Add the terrain layer first
+
+    // Add hillshade layer
+    map.addLayer({
+        "id": "hillshade",
+        "type": "hillshade",
+        "source": "hillshade",
+        "layout": { "visibility": "visible" },
+        "paint": { "hillshade-shadow-color": "#473B24" }
+    });
+    // Then add the building layer
+    map.addSource('openmaptiles', {
+        url: `https://api.maptiler.com/tiles/v3/tiles.json?key=${MAPTILER_KEY}`,
+        type: 'vector',
+    });
+
+    map.addSource('adam', {
+        type: 'geojson',
+        data: 'adam.geojson' // replace with the actual path to your GeoJSON file
+    });
+
+    map.addLayer({
+        'id': 'adam-layer',
+        'type': 'circle',
+        'source': 'adam',
+        'paint': {
+            'circle-radius': 10,
+            'circle-color': '#888888'
+        }
+    });
+
+    // Create a popup for the hover effect
+    const popup = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false
+    });
+
+    // Show the `Name` property on hover
+    map.on('mousemove', 'adam-layer', (e) => {
+        map.getCanvas().style.cursor = 'pointer';
+
+        const feature = e.features[0];
+        popup.setLngLat(e.lngLat)
+            .setText(feature.properties.Name)
+            .addTo(map);
+    });
+
+    // Hide the popup when the mouse leaves the circle layer
+    map.on('mouseleave', 'adam-layer', () => {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+    });
+
+    // Show the `Notes` property on click
+    map.on('click', 'adam-layer', (e) => {
+        const feature = e.features[0];
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setText(feature.properties.Notes)
+            .addTo(map);
+    });
+
+    // Create a table with all the points in the `adam` source
+    const table = document.createElement('table');
+    const features = map.querySourceFeatures('adam');
+    features.forEach((feature) => {
+        const row = document.createElement('tr');
+        const nameCell = document.createElement('td');
+        nameCell.textContent = feature.properties.Name;
+        row.appendChild(nameCell);
+        const notesCell = document.createElement('td');
+        notesCell.textContent = feature.properties.Notes;
+        row.appendChild(notesCell);
+        table.appendChild(row);
+    });
+    document.body.appendChild(table);
+});
+
+
+  document.getElementById('toggle-satellite').addEventListener('click', () => {
+    const visibility = map.getLayoutProperty('satellite-layer', 'visibility');
+
+    if (visibility === 'visible') {
+        map.setLayoutProperty('satellite-layer', 'visibility', 'none');
+    } else {
+        map.setLayoutProperty('satellite-layer', 'visibility', 'visible');
+    }
+});
+</script>
+</body>
+</html>
